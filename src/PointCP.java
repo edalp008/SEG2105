@@ -23,16 +23,16 @@ public class PointCP
   private char typeCoord;
   
   /**
-   * Contains the current value of X or RHO depending on the type
-   * of coordinates.
+   * Contains the current value of X and RHO
    */
-  private double xOrRho;
+  private double x;
+  private double Rho;
   
   /**
-   * Contains the current value of Y or THETA value depending on the
-   * type of coordinates.
+   * Contains the current value of Y and THETA
    */
-  private double yOrTheta;
+  private double y;
+  private double Theta;
 	
   
   //Constructors ******************************************************
@@ -44,77 +44,69 @@ public class PointCP
   {
     if(type != 'C' && type != 'P')
       throw new IllegalArgumentException();
-    this.xOrRho = xOrRho;
-    this.yOrTheta = yOrTheta;
+    if (type == 'C') {
+    	this.x = xOrRho;
+        this.y = yOrTheta;
+    }
+    else {
+    	this.Rho = xOrRho;
+        this.Theta = yOrTheta;
+    }
     typeCoord = type;
+    convertStorageToPolar();
+    convertStorageToCartesian();
   }
-	
+  
   
   //Instance methods **************************************************
  
  
   public double getX()
   {
-    if(typeCoord == 'C') 
-      return xOrRho;
-    else 
-      return (Math.cos(Math.toRadians(yOrTheta)) * xOrRho);
+      return x;
   }
   
   public double getY()
   {
-    if(typeCoord == 'C') 
-      return yOrTheta;
-    else 
-      return (Math.sin(Math.toRadians(yOrTheta)) * xOrRho);
+      return y;
   }
   
   public double getRho()
   {
-    if(typeCoord == 'P') 
-      return xOrRho;
-    else 
-      return (Math.sqrt(Math.pow(xOrRho, 2) + Math.pow(yOrTheta, 2)));
+      return Rho;
   }
   
   public double getTheta()
   {
-    if(typeCoord == 'P')
-      return yOrTheta;
-    else 
-      return Math.toDegrees(Math.atan2(yOrTheta, xOrRho));
+      return Theta;
   }
   
 	
   /**
    * Converts Cartesian coordinates to Polar coordinates.
    */
-  public void convertStorageToPolar()
+  private void convertStorageToPolar()
   {
     if(typeCoord != 'P')
     {
       //Calculate RHO and THETA
-      double temp = getRho();
-      yOrTheta = getTheta();
-      xOrRho = temp;
+      Theta = Math.toDegrees(Math.atan2(y, x));
+      Rho = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
       
-      typeCoord = 'P';  //Change coord type identifier
     }
   }
 	
   /**
    * Converts Polar coordinates to Cartesian coordinates.
    */
-  public void convertStorageToCartesian()
+  private void convertStorageToCartesian()
   {
     if(typeCoord != 'C')
     {
       //Calculate X and Y
-      double temp = getX();
-      yOrTheta = getY();
-      xOrRho = temp;
+      x = Math.cos(Math.toRadians(Theta)) * Rho;
+      y = Math.sin(Math.toRadians(Theta)) * Rho;
    
-      typeCoord = 'C';	//Change coord type identifier
     }
   }
 
@@ -162,8 +154,16 @@ public class PointCP
    */
   public String toString()
   {
-    return "Stored as " + (typeCoord == 'C' 
-       ? "Cartesian  (" + getX() + "," + getY() + ")"
-       : "Polar [" + getRho() + "," + getTheta() + "]") + "\n";
+	  String str = "";
+	  if (typeCoord == 'C') {
+		  str = str + "Cartesian ";
+	  }
+	  else {
+		  str = str + "Polar ";
+	  }
+	  str = str + "coordinates.\n";
+	  str = str + "Stored as Cartesian (" + getX() + "," + getY() + ")";
+	  str = str + " and Polar [" + getRho() + "," + getTheta() + "]\n";
+      return str;
   }
 }
