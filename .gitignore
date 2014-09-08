@@ -6,5 +6,4 @@
 bin/
 .classpath
 .settings/
-*.docx
-*.tmp
+*.html
