@@ -1,0 +1,10 @@
+#################
+## Eclipse
+#################
+
+.project
+bin/
+.classpath
+.settings/
+*.docx
+*.tmp
