@@ -14,6 +14,8 @@
  */
 public class PointCP
 {
+	
+	private static final double DEGREE = 360;
   //Instance variables ************************************************
 
   /**
@@ -137,14 +139,8 @@ public class PointCP
    * @return The rotated image of the original point.
    */
   public PointCP rotatePoint(double rotation)
-  {
-    double radRotation = Math.toRadians(rotation);
-    double X = getX();
-    double Y = getY();
-        
-    return new PointCP('C',
-      (Math.cos(radRotation) * X) - (Math.sin(radRotation) * Y),
-      (Math.sin(radRotation) * X) + (Math.cos(radRotation) * Y));
+  {     
+    return new PointCP('P', Rho, (Theta + rotation)%DEGREE);
   }
 
   /**
