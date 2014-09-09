@@ -14,6 +14,8 @@
  */
 public class PointCP
 {
+	private static final double DEGREE = 360;
+	
   //Instance variables ************************************************
 
   /**
@@ -43,8 +45,8 @@ public class PointCP
     if(type != 'C' && type != 'P')
       throw new IllegalArgumentException();
     if (type == 'P') {
-      this.Rho = xOrRho;
-      this.Theta = yOrTheta;
+      Rho = xOrRho;
+      Theta = yOrTheta;
     }
     else {
       Theta = Math.toDegrees(Math.atan2(yOrTheta, xOrRho));
@@ -105,13 +107,7 @@ public class PointCP
    */
   public PointCP rotatePoint(double rotation)
   {
-    double radRotation = Math.toRadians(rotation);
-    double X = getX();
-    double Y = getY();
-        
-    return new PointCP('C',
-      (Math.cos(radRotation) * X) - (Math.sin(radRotation) * Y),
-      (Math.sin(radRotation) * X) + (Math.cos(radRotation) * Y));
+    return new PointCP('P', Rho, (Theta + rotation)%DEGREE);
   }
 
   /**
