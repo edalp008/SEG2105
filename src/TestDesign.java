@@ -27,6 +27,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to test how long it takes to receive Cartesian coordinates, given Cartesian coordinates
+	//creates a new instance with Cartesian coordinates every time
 	public static long testCartesianCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -39,6 +40,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to test how long it takes to receive Cartesian coordinates, given polar coordinates
+	//creates a new instance with Polar coordinates every time
 	public static long testCartesianPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -51,6 +53,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to test how long it takes to receive polar coordinates, given Cartesian coordinates
+	//creates a new instance with Cartesian coordinates every time
 	public static long testPolarCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -63,6 +66,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to test how long it takes to receive Polar coordinates, given Polar coordinates
+	//creates a new instance with Polar coordinates every time 
 	public static long testPolarPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -75,6 +79,7 @@ public class TestDesign {
 	}
 	
 	//calculates the distance between two Cartesian points
+	//creates a new instance with Cartesian coordinates every time 
 	public static long testDistanceCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -87,6 +92,7 @@ public class TestDesign {
 	}
 	
 	//calculates the distance between two polar points
+	//creates a new instance with Polar coordinates every time 
 	public static long testDistancePolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -99,6 +105,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to return the rotation given Cartesian coordinates
+	//creates a new instance with Cartesian coordinates every time 
 	public static long testRotationCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -110,6 +117,7 @@ public class TestDesign {
 	}
 	
 	//calculates the time to return the rotation given polar coordinates
+	//creates a new instance with Polar coordinates every time 
 	public static long testRotationPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
