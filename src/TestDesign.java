@@ -6,6 +6,7 @@ public class TestDesign {
 	private static final double MAX_DISTANCE = 100;
 	
 	
+	// create and calculate the time to instantiate an object with random Cartesian coordinates
 	public static long testInstantiationCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -15,6 +16,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//create and calculate the time to instantiate an object with random polar coordinates
 	public static long testInstantiationPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -24,7 +26,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
-	
+	//calculates the time to test how long it takes to receive Cartesian coordinates, given Cartesian coordinates
 	public static long testCartesianCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -36,6 +38,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the time to test how long it takes to receive Cartesian coordinates, given polar coordinates
 	public static long testCartesianPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -47,6 +50,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the time to test how long it takes to receive polar coordinates, given Cartesian coordinates
 	public static long testPolarCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -58,6 +62,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the time to test how long it takes to receive Polar coordinates, given Polar coordinates
 	public static long testPolarPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -69,7 +74,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
-	
+	//calculates the distance between two Cartesian points
 	public static long testDistanceCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -81,6 +86,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the distance between two polar points
 	public static long testDistancePolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -92,6 +98,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the time to return the rotation given Cartesian coordinates
 	public static long testRotationCartesian (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -102,6 +109,7 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 	
+	//calculates the time to return the rotation given polar coordinates
 	public static long testRotationPolar (int n) {
 		Random rand = new Random();
 		long start = System.currentTimeMillis();
@@ -112,6 +120,8 @@ public class TestDesign {
 		return System.currentTimeMillis() - start;
 	}
 
+	
+	//prints the results
 	public static void main (String[] args) {
 		final int ITER = 1000000;
 		
