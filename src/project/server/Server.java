@@ -1,33 +1,11 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
-
-//CHANGE: Declared as part of simplechat1 package
 package project.server;
 
 import java.io.*;
 import ocsf.server.*;
 
-/**
- * This class overrides some of the methods in the abstract 
- * superclass in order to give more functionality to the server.
- *
- * @author Dr Timothy C. Lethbridge
- * @author Dr Robert Lagani&egrave;re
- * @author Fran&ccedil;ois B&eacute;langer
- * @author Paul Holden
- * @version July 2000
- */
 public class Server extends AbstractServer 
 {
-  //Class variables *************************************************
-  
-  /**
-   * The default port to listen on.
-   */
   final public static int DEFAULT_PORT = 5555;
-  
-  //Constructors ****************************************************
   
   /**
    * Constructs an instance of the echo server.
@@ -38,9 +16,6 @@ public class Server extends AbstractServer
   {
     super(port);
   }
-
-  
-  //Instance methods ************************************************
   
   /**
    * This method handles any messages received from the client.
@@ -48,10 +23,9 @@ public class Server extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
+  public void handleMessageFromClient (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
+    System.out.println("Message received from " + client);
     this.sendToAllClients(msg);
   }
     
@@ -61,8 +35,7 @@ public class Server extends AbstractServer
    */
   protected void serverStarted()
   {
-    System.out.println
-      ("Server listening for connections on port " + getPort());
+    System.out.println ("Server listening for connections on port " + getPort());
   }
   
   /**
@@ -71,8 +44,7 @@ public class Server extends AbstractServer
    */
   protected void serverStopped()
   {
-    System.out.println
-      ("Server has stopped listening for connections.");
+    System.out.println ("Server has stopped listening for connections.");
   }
   
   //Class methods ***************************************************

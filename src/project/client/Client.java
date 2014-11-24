@@ -1,33 +1,12 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
-
-//CHANGE: Declared as part of simplechat1.client package
 package project.client;
 
 import ocsf.client.*;
-//CHANGE: Added simplechat1 as the parent folder of common
-import simplechat1.common.*;
 import java.io.*;
 
-/**
- * This class overrides some of the methods defined in the abstract
- * superclass in order to give more functionality to the client.
- *
- * @author Dr Timothy C. Lethbridge
- * @author Dr Robert Lagani&egrave;
- * @author Fran&ccedil;ois B&eacute;langer
- * @version July 2000
- */
 public class Client extends AbstractClient
 {
-  //Instance variables **********************************************
-  
-  /**
-   * The interface type variable.  It allows the implementation of 
-   * the display method in the client.
-   */
-  ChatIF clientUI; 
+
+  ClientConsole clientUI; 
 
   
   //Constructors ****************************************************
@@ -40,16 +19,12 @@ public class Client extends AbstractClient
    * @param clientUI The interface type variable.
    */
   
-  public Client(String host, int port, ChatIF clientUI) 
-    throws IOException 
+  public Client(String host, int port, ClientConsole clientUI) throws IOException 
   {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     openConnection();
   }
-
-  
-  //Instance methods ************************************************
     
   /**
    * This method handles all data that comes in from the server.
@@ -58,7 +33,7 @@ public class Client extends AbstractClient
    */
   public void handleMessageFromServer(Object msg) 
   {
-    clientUI.display(msg.toString());
+    clientUI.handle(msg);
   }
 
   /**
@@ -66,7 +41,7 @@ public class Client extends AbstractClient
    *
    * @param message The message from the UI.    
    */
-  public void handleMessageFromClientUI(String message)
+  public void handleMessageFromClientUI(Object message)
   {
     try
     {
@@ -74,8 +49,7 @@ public class Client extends AbstractClient
     }
     catch(IOException e)
     {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
+      clientUI.display("Could not send message to server.  Terminating client.");
       quit();
     }
   }
