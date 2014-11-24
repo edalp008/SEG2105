@@ -1,7 +1,11 @@
 package project.client;
 
 import project.shared.*;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ClientConsole 
 {
@@ -38,12 +42,15 @@ public class ClientConsole
 		try
 		{
 			BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
-			String message;
+			String message, message2;
 
 			while (true) 
 			{
 				message = fromConsole.readLine();
-				client.handleMessageFromClientUI(message);
+				message2 = fromConsole.readLine();
+				Path path = Paths.get(message);
+				byte[] data = Files.readAllBytes(path);
+				client.handleMessageFromClientUI(new TransmissionPackage(message2, data));
 			}
 		} 
 		catch (Exception ex) 
@@ -62,11 +69,6 @@ public class ClientConsole
 	{
 		
 	}
-	
-	public void display(String msg) {
-		System.out.println(msg);
-	}
-
 
 //Class methods ***************************************************
 

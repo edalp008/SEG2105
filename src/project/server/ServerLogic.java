@@ -1,11 +1,16 @@
 package project.server;
 
 import ocsf.server.ConnectionToClient;
+import java.io.*;
 import project.shared.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ServerLogic 
 {
 	final public static int DEFAULT_PORT = 5555;
+	final public static String DEFAULT_PATH = "C:/Users/Peng/Desktop/";
 	Server server;
 
 /**
@@ -27,7 +32,14 @@ public class ServerLogic
 */
 	public void handle(Object message, ConnectionToClient client) 
 	{
-		System.out.println(message.toString());
+		TransmissionPackage rcv = (TransmissionPackage) message;
+		Path path = Paths.get(DEFAULT_PATH + rcv.name);
+		try {
+			Files.write(path, rcv.data); //creates, overwrites
+		}
+		catch (IOException e) {
+			System.out.println("Couldn't retrieve the data.");
+		}
 	}
 	
 	public void startListening() {
