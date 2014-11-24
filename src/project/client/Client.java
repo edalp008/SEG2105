@@ -7,9 +7,6 @@ public class Client extends AbstractClient
 {
 
   ClientConsole clientUI; 
-
-  
-  //Constructors ****************************************************
   
   /**
    * Constructs an instance of the chat client.
@@ -49,7 +46,7 @@ public class Client extends AbstractClient
     }
     catch(IOException e)
     {
-      clientUI.display("Could not send message to server.  Terminating client.");
+      System.out.println("Could not send message to server.  Terminating client.");
       quit();
     }
   }

@@ -1,5 +1,6 @@
 package project.client;
 
+import project.shared.*;
 import java.io.*;
 
 public class ClientConsole 
@@ -77,7 +78,6 @@ public class ClientConsole
 public static void main(String[] args) 
 {
  String host = "";
- int port = 0;  //The port number
 
  try
  {
