@@ -3,13 +3,12 @@ package project.shared;
 import java.security.MessageDigest;
 import java.util.Hashtable;
 import java.io.*;
+import java.util.Arrays;
 
 public class Authenticator implements Serializable {
 	private final String username;
 	private byte[] hashedPassword;
 	private static final long serialVersionUID = 7526672245112776147L;
-	private static final int PASS_LENGTH = 4;
-	private static final int USERNAME_LENGTH = 1;
 	
 	private Authenticator (String username, String password) {
 		this.username = username;
@@ -31,19 +30,19 @@ public class Authenticator implements Serializable {
 			System.out.println("What is your username?");
 			do {
 				username = fromConsole.readLine();
-				if (username.length() < USERNAME_LENGTH) {
-					System.out.println("Username must be at least " + USERNAME_LENGTH + " character long.");
+				if (username.length() < Registrar.USERNAME_LENGTH) {
+					System.out.println("Username must be at least " + Registrar.USERNAME_LENGTH + " character long.");
 				}
 			}
-			while (username.length() < USERNAME_LENGTH);
+			while (username.length() < Registrar.USERNAME_LENGTH);
 			System.out.println("What is your password?");
 			do {
 				password = fromConsole.readLine();
-				if (password.length() < PASS_LENGTH) {
-					System.out.println("Username must be at least " + PASS_LENGTH + " character long.");
+				if (password.length() < Registrar.PASS_LENGTH) {
+					System.out.println("Password must be at least " + Registrar.PASS_LENGTH + " character long.");
 				}
 			}
-			while (password.length() < PASS_LENGTH);
+			while (password.length() < Registrar.PASS_LENGTH);
 		}
 		catch (IOException e) {
 			System.out.println ("Authenticator.getAuthenticator: Invalid username/password.");
@@ -52,12 +51,26 @@ public class Authenticator implements Serializable {
 		return new Authenticator (username, password);
 	}
 	
-	public boolean authenticate (Hashtable<String, User> users) {
-		if (!users.containsKey(username)) {
+	public boolean authenticate (UserList users) {
+		if (!users.contains(username)) {
 			return false;
 		}
 		User user = users.get(username);
-		System.out.println(users.size());
-		return true;
+		byte[] appended = new byte[Registrar.HASH_LENGTH + Registrar.SALT_LENGTH];
+		System.arraycopy(hashedPassword, 0, appended, 0, Registrar.HASH_LENGTH);
+		System.arraycopy(user.getSalt(), 0, appended, Registrar.HASH_LENGTH, Registrar.SALT_LENGTH);
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+			md.update(appended);
+			if (Arrays.equals(user.getHashedPassword(), md.digest())) {
+				return true;
+			}
+			return false;
+		}
+		catch (Exception e) {
+			System.out.println("Authenticator.authenticate: Could not find SHA-256 algorithm.");
+		}
+		return false;
 	}
 }

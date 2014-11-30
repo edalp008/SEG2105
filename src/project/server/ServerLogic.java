@@ -1,16 +1,19 @@
 package project.server;
 
 import ocsf.server.ConnectionToClient;
-
+import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.io.IOException;
 import project.shared.*;
+import java.math.BigInteger;
 
 public class ServerLogic 
 {
 	final private static int DEFAULT_PORT = 5555;
 	final private static String DEFAULT_PATH = "C:/Users/Peng/Desktop/Project";
-	final private static Hashtable<String, User> users = new Hashtable<>();
+	final private static UserList users = new UserList();
+	final private static Hashtable<String, String> sessions = new Hashtable<>();
+	final private static SecureRandom random = new SecureRandom();
 	private Server server;
 
 /**
@@ -41,8 +44,8 @@ public class ServerLogic
 		TransmissionPackage rcv = (TransmissionPackage) message;
 		switch (rcv.code) {
 		case REGISTER:
-			Registrar info = (Registrar) rcv.payload;
-			if (info.checkRegistration(users)) {
+			Registrar reg = (Registrar) rcv.payload;
+			if (reg.register(users)) {
 				send(new TransmissionPackage(Code.REGISTER, true), client);
 			}
 			else {
@@ -56,6 +59,19 @@ public class ServerLogic
 			}
 			break;
 		case AUTHENTICATE:
+			Authenticator auth = (Authenticator) rcv.payload;
+			if (auth.authenticate(users)) {
+				send(new TransmissionPackage(Code.AUTHENTICATE, new BigInteger(260, random).toString(32)), client);
+			}
+			else {
+				send(new TransmissionPackage(Code.AUTHENTICATE, null), client);
+				try {
+					client.close();
+				}
+				catch (IOException e) {
+					System.out.println("ServerLogic.handle: Could not close connection.");
+				}
+			}
 			break;
 		case STORE:
 			break;

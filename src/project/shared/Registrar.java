@@ -9,10 +9,10 @@ public class Registrar implements Serializable {
 	private final String username;
 	private User user = null;
 	private static final long serialVersionUID = 7526671155112776147L;
-	private static final int HASH_LENGTH = 256/8;
-	private static final int SALT_LENGTH = 256/8;
-	private static final int PASS_LENGTH = 4;
-	private static final int USERNAME_LENGTH = 1;
+	public static final int HASH_LENGTH = 256/8;
+	public static final int SALT_LENGTH = 256/8;
+	public static final int PASS_LENGTH = 4;
+	public static final int USERNAME_LENGTH = 1;
 	
 	private Registrar (String username, byte[] salt, String password) {
 		this.username = username;
@@ -48,7 +48,7 @@ public class Registrar implements Serializable {
 			do {
 				password = fromConsole.readLine();
 				if (password.length() < PASS_LENGTH) {
-					System.out.println("Username must be at least " + PASS_LENGTH + " character long.");
+					System.out.println("Password must be at least " + PASS_LENGTH + " character long.");
 				}
 			}
 			while (password.length() < PASS_LENGTH);
@@ -62,8 +62,8 @@ public class Registrar implements Serializable {
 		return new Registrar (username, salt, password);
 	}
 	
-	public boolean checkRegistration (Hashtable<String, User> users) {
-		if (users.containsKey(username)) {
+	public boolean register (UserList users) {
+		if (users.contains(username)) {
 			return false;
 		}
 		users.put(username, user);

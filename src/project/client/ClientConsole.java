@@ -6,8 +6,10 @@ import java.io.*;
 
 public class ClientConsole 
 {
-	
 	final private static int DEFAULT_PORT = 5555;
+	private String authCode = null;
+	private String host;
+	private int port;
 	private Client client;
 
 
@@ -19,10 +21,12 @@ public class ClientConsole
 */
 	public ClientConsole(String host, int port) 
 	{
-		client= new Client(host, port, this);
+		this.host = host;
+		this.port = port;
 	}
 	
 	public boolean openConnection() {
+		client= new Client(host, port, this);
 		try {
 			client.openConnection();
 		}
@@ -37,7 +41,7 @@ public class ClientConsole
 * This method waits for input from the console.  Once it is 
 * received, it sends it to the client's message handler.
 */
-	public void mainmenu() 
+	public void mainMenu() 
 	{
 		try
 		{
@@ -73,6 +77,10 @@ public class ClientConsole
 			System.out.println (e);
 		}
 	}
+	
+	public void loggedInMenu() {
+		
+	}
 
 /**
 * This method overrides the method in the ChatIF interface.  It
@@ -91,9 +99,24 @@ public class ClientConsole
 			else {
 				System.out.println("Username already in use.");
 			}
-			mainmenu();
+			try {
+				client.closeConnection();
+			}
+			catch (IOException e) {
+				System.out.println("ClientConsole.handle: Can't close the connection.");
+			}
+			mainMenu();
 			break;
 		case AUTHENTICATE:
+			if ((String) rcv.payload != null) {
+				System.out.println("Logged in.");
+				authCode = (String) rcv.payload;
+				loggedInMenu();
+			}
+			else {
+				System.out.println("Login failed.");
+				mainMenu();
+			}
 			break;
 		case STORE:
 			break;
@@ -124,7 +147,7 @@ public static void main(String[] args)
    host = "localhost";
  }
  ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
- chat.mainmenu();  //Wait for console data
+ chat.mainMenu();  //Wait for console data
 }
 }
 
