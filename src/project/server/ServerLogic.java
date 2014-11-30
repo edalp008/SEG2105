@@ -1,16 +1,17 @@
 package project.server;
 
 import ocsf.server.ConnectionToClient;
+
 import java.security.SecureRandom;
 import java.util.Hashtable;
-import java.io.IOException;
+import java.io.*;
 import project.shared.*;
 import java.math.BigInteger;
 
 public class ServerLogic 
 {
 	final private static int DEFAULT_PORT = 5555;
-	final private static String DEFAULT_PATH = "C:/Users/Peng/Desktop/Project";
+	final public static String DEFAULT_PATH = "C:/Users/Peng/Desktop/Project/";
 	final private static UserList users = new UserList();
 	final private static Hashtable<String, String> sessions = new Hashtable<>();
 	final private static SecureRandom random = new SecureRandom();
@@ -24,6 +25,10 @@ public class ServerLogic
 */
 	public ServerLogic(int port) 
 	{
+		File dir = new File(DEFAULT_PATH);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
 		server = new Server(port, this);
 		try {
 			  server.listen(); //Start listening for connections

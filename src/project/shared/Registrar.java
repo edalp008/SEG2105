@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.security.SecureRandom;
 import java.io.*;
 
+import project.server.UserList;
+
 public class Registrar implements Serializable {
 	private final String username;
 	private User user = null;

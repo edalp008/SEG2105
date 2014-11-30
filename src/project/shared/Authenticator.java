@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.io.*;
 import java.util.Arrays;
 
+import project.server.UserList;
+
 public class Authenticator implements Serializable {
 	private final String username;
 	private byte[] hashedPassword;
