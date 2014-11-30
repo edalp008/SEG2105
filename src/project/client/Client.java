@@ -1,12 +1,13 @@
 package project.client;
 
 import ocsf.client.*;
+
 import java.io.*;
 
 public class Client extends AbstractClient
 {
 
-  ClientConsole clientUI; 
+  private ClientConsole clientUI; 
   
   /**
    * Constructs an instance of the chat client.
@@ -16,11 +17,10 @@ public class Client extends AbstractClient
    * @param clientUI The interface type variable.
    */
   
-  public Client(String host, int port, ClientConsole clientUI) throws IOException 
+  public Client(String host, int port, ClientConsole clientUI) 
   {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
-    openConnection();
   }
     
   /**
@@ -49,6 +49,12 @@ public class Client extends AbstractClient
       System.out.println("Could not send message to server.  Terminating client.");
       quit();
     }
+    try {
+		  forceResetAfterSend();
+	}
+	catch (IOException e) {
+		  System.out.println("Client.handleMessageFromClientUI: Couldn't reset the buffer.");
+	}
   }
   
   /**
@@ -64,4 +70,3 @@ public class Client extends AbstractClient
     System.exit(0);
   }
 }
-//End of ChatClient class

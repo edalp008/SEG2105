@@ -3,15 +3,12 @@ package project.client;
 import project.shared.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ClientConsole 
 {
 	
-	final public static int DEFAULT_PORT = 5555;
-	Client client;
+	final private static int DEFAULT_PORT = 5555;
+	private Client client;
 
 
 /**
@@ -22,40 +19,58 @@ public class ClientConsole
 */
 	public ClientConsole(String host, int port) 
 	{
-		try 
-		{
-			client= new Client(host, port, this);
-		} 
-		catch(IOException exception) 
-		{
-			System.out.println("Error: Can't setup connection!" + " Terminating client.");
-			System.exit(1);
+		client= new Client(host, port, this);
+	}
+	
+	public boolean openConnection() {
+		try {
+			client.openConnection();
 		}
+		catch (IOException e) {
+			System.out.println("ClientConsole.openConnection: Connection could not be opened.");
+			return false;
+		}
+		return true;
 	}
 
 /**
 * This method waits for input from the console.  Once it is 
 * received, it sends it to the client's message handler.
 */
-	public void accept() 
+	public void mainmenu() 
 	{
 		try
 		{
+			System.out.println("What would you like to do?\n"
+								+ "1) Register\n"
+								+ "2) Login\n"
+								+ "3) Quit");
+			char c = ' ';
 			BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
-			String message, message2;
-
-			while (true) 
-			{
-				message = fromConsole.readLine();
-				message2 = fromConsole.readLine();
-				Path path = Paths.get(message);
-				byte[] data = Files.readAllBytes(path);
-				client.handleMessageFromClientUI(new TransmissionPackage(message2, data));
+			do {
+				c = (char) fromConsole.read();
+				fromConsole.readLine();
+			}
+			while (c != '1' && c != '2' && c != '3');
+			switch (c) {
+			case '1':
+				if (openConnection()) {
+					client.handleMessageFromClientUI(new TransmissionPackage(Code.REGISTER, Registrar.getRegistrar()));
+				}
+				break;
+			case '2':
+				if (openConnection()) {
+					client.handleMessageFromClientUI(new TransmissionPackage(Code.AUTHENTICATE, Authenticator.getAuthenticator()));
+				}
+				break;
+			case '3':
+				System.out.println ("Quitting.");
+				return;
 			}
 		} 
-		catch (Exception ex) 
+		catch (IOException e) 
 		{
-			System.out.println ("Unexpected error while reading from console!");
+			System.out.println (e);
 		}
 	}
 
@@ -67,7 +82,26 @@ public class ClientConsole
 */
 	public void handle(Object message) 
 	{
-		
+		TransmissionPackage rcv = (TransmissionPackage) message;
+		switch (rcv.code) {
+		case REGISTER:
+			if ((Boolean) rcv.payload) {
+				System.out.println("Registration successful!");
+			}
+			else {
+				System.out.println("Username already in use.");
+			}
+			mainmenu();
+			break;
+		case AUTHENTICATE:
+			break;
+		case STORE:
+			break;
+		case RETRIEVE:
+			break;
+		case SHARE:
+			break;
+		}
 	}
 
 //Class methods ***************************************************
@@ -90,8 +124,7 @@ public static void main(String[] args)
    host = "localhost";
  }
  ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
- chat.accept();  //Wait for console data
+ chat.mainmenu();  //Wait for console data
 }
 }
-//End of ConsoleChat class
 

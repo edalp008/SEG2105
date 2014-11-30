@@ -4,8 +4,7 @@ import ocsf.server.*;
 
 public class Server extends AbstractServer 
 {
-  final public static int DEFAULT_PORT = 5555;
-  ServerLogic serverlogic;
+  private ServerLogic serverlogic;
   
   /**
    * Constructs an instance of the echo server.
@@ -59,4 +58,3 @@ public class Server extends AbstractServer
 	  System.out.println("A client has unexpectedly disconnected");
   }
 }
-//End of EchoServer class
