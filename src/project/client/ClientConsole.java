@@ -2,6 +2,8 @@ package project.client;
 
 import project.shared.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class ClientConsole 
 {
@@ -106,7 +108,7 @@ public class ClientConsole
 				client.handleMessageFromClientUI(new TransmissionPackage(Code.STORE, Storer.getStorer(username, password, encryptionSalt)));
 				break;
 			case '2':
-				
+				client.handleMessageFromClientUI(new TransmissionPackage(Code.RETRIEVEFILETABLE, username));
 				break;
 			case '3':
 				System.out.println ("Logged out.");
@@ -123,9 +125,48 @@ public class ClientConsole
 		}
 	}
 	
-	public void selectFileMenu () {
-		
+	public void selectFileMenu (Hashtable <String, FileData> f) {
+		ArrayList<FileData> files = new ArrayList<>(f.values());
+		int i = 0;
+		while (i < files.size()) {
+			System.out.println(i + ") " + files.get(i).getFilename() + ": " + files.get(i).getOriginalPath());
+			i ++;
+		}
+		System.out.print (i + ") Back");
+		BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
+		String input = "-1";
+		try {
+			do {
+				input = fromConsole.readLine();
+					if (!isInteger(input) || Integer.parseInt(input) < 0 || Integer.parseInt(input) > i) {
+						System.out.println("Input must be an integer between 0 and " + i + ".");
+					}
+			}
+			while (!isInteger(input) || Integer.parseInt(input) < 0 || Integer.parseInt(input) > i);
+		}
+		catch (IOException e) {
+			System.out.println("ClientConsole.selecFileMenu: " + e);
+		}
+		int selection = Integer.parseInt(input);
+		if (selection == i) {
+			loggedInMenu();
+		}
+		else {
+			String[] data = new String[2];
+			data[0] = username;
+			data[1] = files.get(selection).getFilename();
+			client.handleMessageFromClientUI(new TransmissionPackage(Code.RETRIEVEFILE, data));
+		}
 	}
+	
+	private boolean isInteger(String str) {
+		  try {
+		    Integer.parseInt(str);
+		    return true;
+		  } catch(NumberFormatException e) {
+		    return false;
+		  }
+		}
 
 /**
 * This method overrides the method in the ChatIF interface.  It
@@ -170,8 +211,13 @@ public class ClientConsole
 			loggedInMenu();
 			break;
 		case RETRIEVEFILETABLE:
+			Hashtable<String, FileData> files = (Hashtable<String, FileData>) rcv.payload;
+			selectFileMenu (files);
 			break;
 		case RETRIEVEFILE:
+			FileRetriever pkg = (FileRetriever) rcv.payload;
+			pkg.save(password, encryptionSalt);
+			loggedInMenu();
 			break;
 		}
 	}

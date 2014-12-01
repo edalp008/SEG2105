@@ -7,7 +7,7 @@ import project.shared.*;
 public class ServerLogic 
 {
 	final private static int DEFAULT_PORT = 5555;
-	final public static String DEFAULT_PATH = "C:/Users/Peng/Desktop/Project/";
+	final public static String DEFAULT_PATH = System.getProperty("user.home") + "/Desktop/Project/";
 	final private static UserList users = new UserList();
 	private Server server;
 
@@ -75,8 +75,12 @@ public class ServerLogic
 			send(new TransmissionPackage(Code.STORE, storer.store(users)), client);
 			break;
 		case RETRIEVEFILETABLE:
+			String username = (String)rcv.payload;
+			send(new TransmissionPackage(Code.RETRIEVEFILETABLE, users.get(username).getFileTable()), client);
 			break;
 		case RETRIEVEFILE:
+			String[] data = (String[]) rcv.payload;
+			send(new TransmissionPackage(Code.RETRIEVEFILE, new FileRetriever (data)), client);
 			break;
 		}
 	}
