@@ -80,7 +80,7 @@ public class ServerLogic
 			break;
 		case RETRIEVEFILE:
 			String[] data = (String[]) rcv.payload;
-			send(new TransmissionPackage(Code.RETRIEVEFILE, new FileRetriever (data)), client);
+			send(new TransmissionPackage(Code.RETRIEVEFILE, new FileRetriever (data, users)), client);
 			break;
 		}
 	}

@@ -6,13 +6,13 @@ public class FileData implements Serializable {
 	
 	private final String filename;
 	private final String originalPath;
-	//private final byte[] encryptedKey;
+	private final byte[] IV;
 	private static final long serialVersionUID = 7511239655112776147L;
 	
-	public FileData (String filename, String originalPath/*, byte[] encryptedKey*/) {
+	public FileData (String filename, String originalPath, byte[] IV) {
 		this.filename = filename;
 		this.originalPath = originalPath;
-		//this.encryptedKey = encryptedKey;
+		this.IV = IV;
 	}
 	
 	public String getFilename () {
@@ -23,7 +23,7 @@ public class FileData implements Serializable {
 		return originalPath;
 	}
 	
-	/*public byte[] getEncryptedKey () {
-		return encryptedKey;
-	}*/
+	public byte[] getIV () {
+		return IV;
+	}
 }

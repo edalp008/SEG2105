@@ -7,15 +7,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.security.MessageDigest;
 
 import project.server.ServerLogic;
+import project.server.UserList;
 
 public class FileRetriever implements Serializable{
 
 	private static final long serialVersionUID = 7387628465112776147L;
+	private byte[] IV;
 	private byte[] encryptedFile = null;
 	
-	public FileRetriever (String[] data) {
+	public FileRetriever (String[] data, UserList users) {
+		this.IV = users.get(data[0]).getFileTable().get(data[1]).getIV();
 		try {
 			String pathString = ServerLogic.DEFAULT_PATH + data[0] + "/" + data[1];
 			File file = new File (pathString);
@@ -46,11 +50,22 @@ public class FileRetriever implements Serializable{
 			while (file.exists());
 		}
 		catch (IOException e) {
-			System.out.println ("Storer.getStorer: " + e);
+			System.out.println ("Storer.s: " + e);
 		}
 		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] passwordBytes = password.getBytes("UTF-8");
+			byte[] appended = new byte[passwordBytes.length + Registrar.SALT_LENGTH];
+			System.arraycopy(passwordBytes, 0, appended, 0, passwordBytes.length);
+			System.arraycopy(encryptionSalt, 0, appended, passwordBytes.length, Registrar.SALT_LENGTH);
+			md.update(appended);
+			byte[] keyBytes = new byte[Registrar.HASH_LENGTH/2];
+			System.arraycopy(md.digest(), 0, keyBytes, 0, Registrar.HASH_LENGTH/2);
+			
+			byte[] outBytes =  CryptoFunctions.encrypt(keyBytes, encryptedFile, IV);
+			
 			FileOutputStream output = new FileOutputStream(file);
-			output.write(encryptedFile);
+			output.write(outBytes);
 			output.close();
 		}
 		catch (Exception e) {
