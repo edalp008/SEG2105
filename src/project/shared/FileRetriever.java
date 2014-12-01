@@ -62,7 +62,7 @@ public class FileRetriever implements Serializable{
 			byte[] keyBytes = new byte[Registrar.HASH_LENGTH/2];
 			System.arraycopy(md.digest(), 0, keyBytes, 0, Registrar.HASH_LENGTH/2);
 			
-			byte[] outBytes =  CryptoFunctions.encrypt(keyBytes, encryptedFile, IV);
+			byte[] outBytes =  CryptoFunctions.decrypt(keyBytes, encryptedFile, IV);
 			
 			FileOutputStream output = new FileOutputStream(file);
 			output.write(outBytes);
