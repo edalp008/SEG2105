@@ -160,13 +160,13 @@ public class ClientConsole
 	}
 	
 	private boolean isInteger(String str) {
-		  try {
+		try {
 		    Integer.parseInt(str);
 		    return true;
-		  } catch(NumberFormatException e) {
+		} catch(NumberFormatException e) {
 		    return false;
-		  }
 		}
+	}
 
 /**
 * This method overrides the method in the ChatIF interface.  It
