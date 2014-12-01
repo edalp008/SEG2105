@@ -1,10 +1,9 @@
 package project.shared;
 
 import java.security.MessageDigest;
-import java.util.Hashtable;
 import java.io.*;
 import java.util.Arrays;
-
+import project.client.ClientConsole;
 import project.server.UserList;
 
 public class Authenticator implements Serializable {
@@ -25,7 +24,7 @@ public class Authenticator implements Serializable {
 		}
 	}
 	
-	public static Authenticator getAuthenticator () {
+	public static Authenticator getAuthenticator (ClientConsole cc) {
 		String username, password;
 		BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
 		try {
@@ -50,12 +49,18 @@ public class Authenticator implements Serializable {
 			System.out.println ("Authenticator.getAuthenticator: Invalid username/password.");
 			return null;
 		}
+		cc.setUsername(username);
+		cc.setPassword(password);
 		return new Authenticator (username, password);
 	}
 	
-	public boolean authenticate (UserList users) {
+	public String getUsername () {
+		return username;
+	}
+	
+	public byte[] authenticate (UserList users) {
 		if (!users.contains(username)) {
-			return false;
+			return null;
 		}
 		User user = users.get(username);
 		byte[] appended = new byte[Registrar.HASH_LENGTH + Registrar.SALT_LENGTH];
@@ -66,13 +71,13 @@ public class Authenticator implements Serializable {
 			md = MessageDigest.getInstance("SHA-256");
 			md.update(appended);
 			if (Arrays.equals(user.getHashedPassword(), md.digest())) {
-				return true;
+				return user.getEncryptionSalt();
 			}
-			return false;
+			return null;
 		}
 		catch (Exception e) {
 			System.out.println("Authenticator.authenticate: Could not find SHA-256 algorithm.");
 		}
-		return false;
+		return null;
 	}
 }

@@ -6,4 +6,6 @@ public class FileTable implements Serializable {
 	
 	private static final long serialVersionUID = 7512376398712776147L;
 	
+	
+	
 }

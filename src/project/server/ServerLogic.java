@@ -1,20 +1,14 @@
 package project.server;
 
 import ocsf.server.ConnectionToClient;
-
-import java.security.SecureRandom;
-import java.util.Hashtable;
 import java.io.*;
 import project.shared.*;
-import java.math.BigInteger;
 
 public class ServerLogic 
 {
 	final private static int DEFAULT_PORT = 5555;
 	final public static String DEFAULT_PATH = "C:/Users/Peng/Desktop/Project/";
 	final private static UserList users = new UserList();
-	final private static Hashtable<String, String> sessions = new Hashtable<>();
-	final private static SecureRandom random = new SecureRandom();
 	private Server server;
 
 /**
@@ -65,11 +59,9 @@ public class ServerLogic
 			break;
 		case AUTHENTICATE:
 			Authenticator auth = (Authenticator) rcv.payload;
-			if (auth.authenticate(users)) {
-				send(new TransmissionPackage(Code.AUTHENTICATE, new BigInteger(260, random).toString(32)), client);
-			}
-			else {
-				send(new TransmissionPackage(Code.AUTHENTICATE, null), client);
+			byte[] encryptionSalt = auth.authenticate(users);
+			send(new TransmissionPackage(Code.AUTHENTICATE, encryptionSalt), client);
+			if (encryptionSalt == null) {
 				try {
 					client.close();
 				}
@@ -79,6 +71,7 @@ public class ServerLogic
 			}
 			break;
 		case STORE:
+			Storer store = (Storer) rcv.payload;
 			break;
 		case RETRIEVE:
 			break;
@@ -112,7 +105,7 @@ public class ServerLogic
 */
 	public static void main(String[] args) 
 	{
-		ServerLogic host = new ServerLogic(DEFAULT_PORT);
+		new ServerLogic(DEFAULT_PORT);
 	}
 }
 

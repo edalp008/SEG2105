@@ -1,10 +1,8 @@
 package project.shared;
 
 import java.security.MessageDigest;
-import java.util.Hashtable;
 import java.security.SecureRandom;
 import java.io.*;
-
 import project.server.UserList;
 
 public class Registrar implements Serializable {
@@ -16,7 +14,7 @@ public class Registrar implements Serializable {
 	public static final int PASS_LENGTH = 4;
 	public static final int USERNAME_LENGTH = 1;
 	
-	private Registrar (String username, byte[] salt, String password) {
+	private Registrar (String username, byte[] salt, String password, byte[] encryptionSalt) {
 		this.username = username;
 		MessageDigest md;
 		try {
@@ -26,7 +24,7 @@ public class Registrar implements Serializable {
 			System.arraycopy(md.digest(), 0, appended, 0, HASH_LENGTH);
 			System.arraycopy(salt, 0, appended, HASH_LENGTH, SALT_LENGTH);
 			md.update(appended);
-			user = new User(username, salt, md.digest());
+			user = new User(username, salt, md.digest(), encryptionSalt);
 		}
 		catch (Exception e) {
 			System.out.println("Registrar: Could not find SHA-256 algorithm.");
@@ -36,6 +34,7 @@ public class Registrar implements Serializable {
 	public static Registrar getRegistrar () {
 		String username, password;
 		byte[] salt = new byte[SALT_LENGTH];
+		byte[] encryptionSalt = new byte[SALT_LENGTH];
 		BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			System.out.println("What is your username?");
@@ -61,7 +60,8 @@ public class Registrar implements Serializable {
 		}
 		SecureRandom random = new SecureRandom();
 		random.nextBytes(salt);
-		return new Registrar (username, salt, password);
+		random.nextBytes(encryptionSalt);
+		return new Registrar (username, salt, password, encryptionSalt);
 	}
 	
 	public boolean register (UserList users) {

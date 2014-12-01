@@ -1,6 +1,7 @@
 package project.server;
 
 import ocsf.server.*;
+import java.io.IOException;
 
 public class Server extends AbstractServer 
 {
@@ -51,10 +52,16 @@ public class Server extends AbstractServer
   }
   
   synchronized protected void clientDisconnected(ConnectionToClient client) {
-	  System.out.println(client.toString() + " has disconnected.");
+	  System.out.println("Server.clientDisconnected: A client has been disconnected.");
   }
   
   synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
-	  System.out.println("A client has unexpectedly disconnected");
+	  try {
+		  client.close();
+	  }
+	  catch (IOException e) {
+		  System.out.println("Server.clientException: Could not close connection.");
+	  }
+	  
   }
 }

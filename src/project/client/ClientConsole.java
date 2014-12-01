@@ -1,13 +1,14 @@
 package project.client;
 
 import project.shared.*;
-
 import java.io.*;
 
 public class ClientConsole 
 {
 	final private static int DEFAULT_PORT = 5555;
-	private String authCode = null;
+	private byte[] encryptionSalt = null;
+	private String username = null;
+	private String password = null;
 	private String host;
 	private int port;
 	private Client client;
@@ -36,8 +37,16 @@ public class ClientConsole
 		}
 		return true;
 	}
-
+	
+	public void setUsername (String username) {
+		this.username = username;
+	}
+	
+	public void setPassword (String password) {
+		this.password = password;
+	}
 /**
+ * 
 * This method waits for input from the console.  Once it is 
 * received, it sends it to the client's message handler.
 */
@@ -64,22 +73,54 @@ public class ClientConsole
 				break;
 			case '2':
 				if (openConnection()) {
-					client.handleMessageFromClientUI(new TransmissionPackage(Code.AUTHENTICATE, Authenticator.getAuthenticator()));
+					client.handleMessageFromClientUI(new TransmissionPackage(Code.AUTHENTICATE, Authenticator.getAuthenticator(this)));
 				}
 				break;
 			case '3':
 				System.out.println ("Quitting.");
-				return;
+				System.exit(0);
 			}
 		} 
 		catch (IOException e) 
 		{
-			System.out.println (e);
+			System.out.println ("ClientConsole.mainMenu: " + e);
 		}
 	}
 	
 	public void loggedInMenu() {
-		
+		try
+		{
+			System.out.println("What would you like to do?\n"
+								+ "1) Store file\n"
+								+ "2) Retrieve file\n"
+								+ "3) Log out");
+			char c = ' ';
+			BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
+			do {
+				c = (char) fromConsole.read();
+				fromConsole.readLine();
+			}
+			while (c != '1' && c != '2' && c != '3');
+			switch (c) {
+			case '1':
+				client.handleMessageFromClientUI(new TransmissionPackage(Code.STORE, Storer.getStorer(username, password, encryptionSalt)));
+				break;
+			case '2':
+				
+				break;
+			case '3':
+				System.out.println ("Logged out.");
+				username = null;
+				password = null;
+				encryptionSalt = null;
+				client.closeConnection();
+				mainMenu();
+			}
+		} 
+		catch (IOException e) 
+		{
+			System.out.println ("ClientConsole.mainMenu: " + e);
+		}
 	}
 
 /**
@@ -99,22 +140,19 @@ public class ClientConsole
 			else {
 				System.out.println("Username already in use.");
 			}
-			try {
-				client.closeConnection();
-			}
-			catch (IOException e) {
-				System.out.println("ClientConsole.handle: Can't close the connection.");
-			}
 			mainMenu();
 			break;
 		case AUTHENTICATE:
-			if ((String) rcv.payload != null) {
+			if (rcv.payload != null) {
 				System.out.println("Logged in.");
-				authCode = (String) rcv.payload;
+				encryptionSalt = (byte[]) rcv.payload;
 				loggedInMenu();
 			}
 			else {
 				System.out.println("Login failed.");
+				username = null;
+				password = null;
+				encryptionSalt = null;
 				mainMenu();
 			}
 			break;

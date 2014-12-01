@@ -1,7 +1,6 @@
 package project.client;
 
 import ocsf.client.*;
-
 import java.io.*;
 
 public class Client extends AbstractClient
@@ -56,6 +55,15 @@ public class Client extends AbstractClient
 		  System.out.println("Client.handleMessageFromClientUI: Couldn't reset the buffer.");
 	}
   }
+  
+  protected void connectionException(Exception exception) {
+	  try {
+		  closeConnection();
+	  }
+	  catch(IOException e) {
+		  System.out.println ("Client.connectionException: Could not close connection.");
+	}
+}
   
   /**
    * This method terminates the client.
