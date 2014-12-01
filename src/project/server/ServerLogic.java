@@ -71,11 +71,10 @@ public class ServerLogic
 			}
 			break;
 		case STORE:
-			Storer store = (Storer) rcv.payload;
+			Storer storer = (Storer) rcv.payload;
+			send(new TransmissionPackage(Code.STORE, storer.store()), client);
 			break;
 		case RETRIEVE:
-			break;
-		case SHARE:
 			break;
 		}
 	}

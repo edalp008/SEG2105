@@ -1,40 +1,63 @@
 package project.shared;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import project.server.*;
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Storer implements Serializable{
 	
 	private static final long serialVersionUID = 2562376398712776147L;
 	private final String username;
-	private final FileData fileData;
-	private final byte[] encryptedFile;
+	private FileData fileData;
+	private byte[] encryptedFile;
 
-	private Storer (String username, String password, byte[] encryptionSalt, String filePath, String fileName) {
+	private Storer (String username, String password, byte[] encryptionSalt, String filePath, String filename) {
 		this.username = username;
 		try {
+			/*MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] passwordBytes = password.getBytes("UTF-8");
+			byte[] appended = new byte[passwordBytes.length + Registrar.SALT_LENGTH];
+			System.arraycopy(passwordBytes, 0, appended, 0, passwordBytes.length);
+			System.arraycopy(encryptionSalt, 0, appended, passwordBytes.length, Registrar.SALT_LENGTH);
+			md.update(appended);
+			byte[] encryptionKeyBytes = new byte[Registrar.HASH_LENGTH/2];
+			System.arraycopy(md.digest(), 0, encryptionKeyBytes, 0, Registrar.HASH_LENGTH/2);
+			SecretKey encryptionKey = new SecretKeySpec (encryptionKeyBytes, "AES");
+			
+			SecureRandom rand = new SecureRandom();
+			byte[] tempFileKeyBytes = new byte[Registrar.HASH_LENGTH/2];
+			rand.nextBytes(tempFileKeyBytes);
+			SecretKey fileKey = new SecretKeySpec (tempFileKeyBytes, "AES");
+			
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			
+			cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
+			fileData = new FileData (filename, cipher.doFinal(tempFileKeyBytes));*/
+			
+			fileData = new FileData (filename);
+			
 			File file = new File (filePath);
 			FileInputStream input = new FileInputStream(file);
-			KeyGenerator kgen = KeyGenerator.getInstance("AES");
-			kgen.init(256);
-			SecretKey secretKey = kgen.generateKey();
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+			byte[] fileBytes = new byte[(int) file.length()];
+			input.read(fileBytes);
+			input.close();
 			
-			byte[] inputBytes = new byte[(int) file.length()];
+			/*cipher.init(Cipher.ENCRYPT_MODE, fileKey);
+			encryptedFile = cipher.doFinal(fileBytes);*/
 			
+			encryptedFile = fileBytes;
 		}
 		catch (Exception e) {
 			System.out.println ("Storer: " + e);
 		}
-		
-		encryptedFile = null;
 	}
 	
 	public static Storer getStorer (String username, String password, byte[] encryptionSalt) {
-		String filePath, fileName;
+		String filePath, filename;
 		File file = null;
 		BufferedReader fromConsole = new BufferedReader(new InputStreamReader(System.in));
 		try {
@@ -49,21 +72,36 @@ public class Storer implements Serializable{
 			while (!file.exists());
 			System.out.println("What do you want the file to be named on the server?");
 			do {
-				fileName = fromConsole.readLine();
-				if (fileName.length() < 1) {
+				filename = fromConsole.readLine();
+				if (filename.length() < 1) {
 					System.out.println("The file name must be at least 1 character long.");
 				}
 			}
-			while (fileName.length() < 1);
+			while (filename.length() < 1);
 		}
 		catch (IOException e) {
 			System.out.println ("Storer.getStorer: " + e);
 			return null;
 		}
-		return new Storer(username, password, encryptionSalt, filePath, fileName);
+		return new Storer(username, password, encryptionSalt, filePath, filename);
 	}
 	
-	public boolean authenticate () {
+	public boolean store () {
+		String pathString = ServerLogic.DEFAULT_PATH + username + "/";
+		File path = new File(pathString);
+		if (!path.exists()) {
+			path.mkdirs();
+		}
+		path = new File(pathString + fileData.getFilename());
+		
+		try {
+			FileOutputStream output = new FileOutputStream(path);
+			output.write(encryptedFile);
+			output.close();
+		}
+		catch (Exception e) {
+			System.out.println ("Storer.store: " + e);
+		}
 		return true;
 	}
 }

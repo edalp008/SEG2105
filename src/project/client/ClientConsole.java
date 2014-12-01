@@ -157,10 +157,15 @@ public class ClientConsole
 			}
 			break;
 		case STORE:
+			if ((Boolean)rcv.payload) {
+				System.out.println ("File saved.");
+			}
+			else {
+				System.out.println ("File not saved due to duplicate name.");
+			}
+			loggedInMenu();
 			break;
 		case RETRIEVE:
-			break;
-		case SHARE:
 			break;
 		}
 	}
