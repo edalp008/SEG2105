@@ -18,27 +18,20 @@ public class Storer implements Serializable{
 	private Storer (String username, String password, byte[] encryptionSalt, String filePath, String filename) {
 		this.username = username;
 		try {
-			/*MessageDigest md = MessageDigest.getInstance("SHA-256");
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
 			byte[] passwordBytes = password.getBytes("UTF-8");
 			byte[] appended = new byte[passwordBytes.length + Registrar.SALT_LENGTH];
 			System.arraycopy(passwordBytes, 0, appended, 0, passwordBytes.length);
 			System.arraycopy(encryptionSalt, 0, appended, passwordBytes.length, Registrar.SALT_LENGTH);
 			md.update(appended);
-			byte[] encryptionKeyBytes = new byte[Registrar.HASH_LENGTH/2];
-			System.arraycopy(md.digest(), 0, encryptionKeyBytes, 0, Registrar.HASH_LENGTH/2);
-			SecretKey encryptionKey = new SecretKeySpec (encryptionKeyBytes, "AES");
+			byte[] keyBytes = new byte[Registrar.HASH_LENGTH/2];
+			System.arraycopy(md.digest(), 0, keyBytes, 0, Registrar.HASH_LENGTH/2);
 			
 			SecureRandom rand = new SecureRandom();
-			byte[] tempFileKeyBytes = new byte[Registrar.HASH_LENGTH/2];
-			rand.nextBytes(tempFileKeyBytes);
-			SecretKey fileKey = new SecretKeySpec (tempFileKeyBytes, "AES");
-			
-			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			
-			cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
-			fileData = new FileData (filename, cipher.doFinal(tempFileKeyBytes));*/
-			
-			fileData = new FileData (filename, filePath);
+			byte[] IV = new byte[Registrar.HASH_LENGTH/2];
+			rand.nextBytes(IV);
+
+			fileData = new FileData (filename, filePath, IV);
 			
 			File file = new File (filePath);
 			FileInputStream input = new FileInputStream(file);
@@ -46,10 +39,7 @@ public class Storer implements Serializable{
 			input.read(fileBytes);
 			input.close();
 			
-			/*cipher.init(Cipher.ENCRYPT_MODE, fileKey);
-			encryptedFile = cipher.doFinal(fileBytes);*/
-			
-			encryptedFile = fileBytes;
+			encryptedFile = CryptoFunctions.encrypt(keyBytes, fileBytes, IV);
 		}
 		catch (Exception e) {
 			System.out.println ("Storer: " + e);
