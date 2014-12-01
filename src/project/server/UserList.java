@@ -2,7 +2,7 @@ package project.server;
 
 import java.io.*;
 import java.util.Hashtable;
-import project.shared.User;
+import project.shared.*;
 import java.util.Enumeration;
 
 public class UserList implements Serializable {
@@ -29,6 +29,20 @@ public class UserList implements Serializable {
 		save();
 	}
 	
+	public boolean newFile (String username, FileData fileData) {
+		Hashtable<String, FileData> files = users.get(username).getFileTable();
+		if (files.containsKey(fileData.getFilename())) {
+			return false;
+		}
+		files.put(fileData.getFilename(), fileData);
+		save();
+		return true;
+	}
+	
+	public Hashtable<String, FileData> getFileTable (String username) {
+		return users.get(username).getFileTable();
+	}
+	
 	public void save () {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ServerLogic.DEFAULT_PATH + USERS_FILENAME));
@@ -47,6 +61,7 @@ public class UserList implements Serializable {
 			if (check.exists()) {
 				ObjectInputStream in = new ObjectInputStream(new FileInputStream(ServerLogic.DEFAULT_PATH + USERS_FILENAME));
 				users.putAll((Hashtable<String, User>) in.readObject());
+				in.close();
 			}
 		}
 		catch (IOException e) {

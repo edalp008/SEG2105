@@ -1,13 +1,14 @@
 package project.shared;
 
 import java.io.Serializable;
+import java.util.Hashtable;
 
 public class User implements Serializable {
 	private final String username;
 	private final byte[] salt;
 	private final byte[] hashedPassword;
 	private final byte[] encryptionSalt;
-	private final FileTable files = new FileTable();
+	private final Hashtable <String, FileData> files = new Hashtable<>();
 	private static final long serialVersionUID = 7512371155112776147L;
 	
 	public User (String username, byte[] salt, byte[] hashedPassword, byte[] encryptionSalt) {
@@ -33,7 +34,7 @@ public class User implements Serializable {
 		return encryptionSalt;
 	}
 	
-	public FileTable getFileTable () {
+	public Hashtable<String, FileData> getFileTable () {
 		return files;
 	}
 }

@@ -122,6 +122,10 @@ public class ClientConsole
 			System.out.println ("ClientConsole.mainMenu: " + e);
 		}
 	}
+	
+	public void selectFileMenu () {
+		
+	}
 
 /**
 * This method overrides the method in the ChatIF interface.  It
@@ -165,7 +169,9 @@ public class ClientConsole
 			}
 			loggedInMenu();
 			break;
-		case RETRIEVE:
+		case RETRIEVEFILETABLE:
+			break;
+		case RETRIEVEFILE:
 			break;
 		}
 	}

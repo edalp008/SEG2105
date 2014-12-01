@@ -38,7 +38,7 @@ public class Storer implements Serializable{
 			cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
 			fileData = new FileData (filename, cipher.doFinal(tempFileKeyBytes));*/
 			
-			fileData = new FileData (filename);
+			fileData = new FileData (filename, filePath);
 			
 			File file = new File (filePath);
 			FileInputStream input = new FileInputStream(file);
@@ -86,7 +86,10 @@ public class Storer implements Serializable{
 		return new Storer(username, password, encryptionSalt, filePath, filename);
 	}
 	
-	public boolean store () {
+	public boolean store (UserList users) {
+		if (!users.newFile(username, fileData)) {
+			return false;
+		}
 		String pathString = ServerLogic.DEFAULT_PATH + username + "/";
 		File path = new File(pathString);
 		if (!path.exists()) {

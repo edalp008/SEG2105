@@ -72,9 +72,11 @@ public class ServerLogic
 			break;
 		case STORE:
 			Storer storer = (Storer) rcv.payload;
-			send(new TransmissionPackage(Code.STORE, storer.store()), client);
+			send(new TransmissionPackage(Code.STORE, storer.store(users)), client);
 			break;
-		case RETRIEVE:
+		case RETRIEVEFILETABLE:
+			break;
+		case RETRIEVEFILE:
 			break;
 		}
 	}
